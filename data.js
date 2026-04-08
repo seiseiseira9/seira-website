@@ -1,14 +1,14 @@
 const DATA = {
   heroSub:    'みんなの元カノ',
   heroName:   '南星 聖来',
-  heroNameEn: 'Nansei Seira',
+  heroNameEn: 'Nanse Seira',
   heroCatch:  '気になっちゃいました？',
   profile: {
     name:   '南星 聖来（ナンセ セイラ）',
     age:    '25',
     height: '163 cm',
     blood:  'A型',
-    shop:   'クラブブレンダ 難波店',
+    shop:   'クラブブレンダ 難波クラブ、ブレンダビップ東京',
     area:   '大阪・日本橋 / 東京にもよくいます',
     bio:    'おはこんにちこんばんわ💞\nみんなの元カノやらせてもらってます。\nブレンダ難波の聖来です🪼💞\n東京にもよくいます。',
   },
