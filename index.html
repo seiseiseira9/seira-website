@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>南星 聖来 | Nansei Seira</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-sub">みんなの元カノ</p>
+      <h1 class="hero-name">南星 聖来</h1>
+      <p class="hero-name-en">Nansei Seira</p>
+      <p class="hero-catch">気になっちゃいました？</p>
+      <a href="#profile" class="btn">Profile</a>
+    </div>
+  </section>
+
+  <!-- Profile -->
+  <section class="section" id="profile">
+    <div class="container">
+      <h2 class="section-title">Profile</h2>
+      <div class="profile-grid">
+        <div class="profile-photo">
+          <div class="photo-scroll">
+            <img src="images/1.jpg"  alt="聖来" />
+            <img src="images/2.JPG"  alt="聖来" />
+            <img src="images/3.JPEG" alt="聖来" />
+            <img src="images/4.JPEG" alt="聖来" />
+          </div>
+          <div class="photo-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+        <div class="profile-info">
+          <table class="profile-table">
+            <tr><th>Name</th><td>南星 聖来（ナンセ セイラ）</td></tr>
+            <tr><th>Age</th><td>25</td></tr>
+            <tr><th>Height</th><td>163 cm</td></tr>
+            <tr><th>Blood Type</th><td>A型</td></tr>
+            <tr><th>Shop</th><td>クラブブレンダ 難波店</td></tr>
+            <tr><th>Area</th><td>大阪・日本橋 / 東京にもよくいます</td></tr>
+          </table>
+          <p class="profile-bio">
+            おはこんにちこんばんわ💞<br>
+            みんなの元カノやらせてもらってます。<br>
+            ブレンダ難波の聖来です🪼💞<br>
+            東京にもよくいます。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SNS -->
+  <section class="section section-dark" id="sns">
+    <div class="container">
+      <h2 class="section-title light">SNS &amp; Links</h2>
+      <div class="sns-grid" id="sns-grid"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 南星 聖来 / Nansei Seira</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script>
+    // Photo scroll dots
+    const photoScroll = document.querySelector('.photo-scroll');
+    const dots = document.querySelectorAll('.dot');
+    if (photoScroll) {
+      photoScroll.addEventListener('scroll', () => {
+        const index = Math.round(photoScroll.scrollLeft / photoScroll.offsetWidth);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      });
+    }
+
+    // SNS Cards
+    const grid = document.getElementById('sns-grid');
+    DATA.sns.forEach(item => {
+      const a = document.createElement('a');
+      a.href = item.url;
+      a.target = '_blank';
+      a.className = 'sns-card';
+      a.innerHTML = `
+        <span class="sns-icon">${item.icon}</span>
+        <span class="sns-label">${item.label}</span>
+        <span class="sns-desc">${item.desc}</span>
+      `;
+      grid.appendChild(a);
+    });
+  </script>
+</body>
+</html>
