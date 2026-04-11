@@ -72,6 +72,43 @@
 
   <script src="data.js"></script>
   <script>
+    // Load saved data from localStorage if available
+    (function() {
+      const saved = localStorage.getItem('SEIRA_DATA');
+      if (saved) {
+        try {
+          const d = JSON.parse(saved);
+          Object.assign(DATA, d);
+        } catch(e) {}
+      }
+
+      // Apply DATA to DOM
+      const heroSub = document.querySelector('.hero-sub');
+      const heroName = document.querySelector('.hero-name');
+      const heroNameEn = document.querySelector('.hero-name-en');
+      const heroCatch = document.querySelector('.hero-catch');
+      if (heroSub) heroSub.textContent = DATA.heroSub;
+      if (heroName) heroName.textContent = DATA.heroName;
+      if (heroNameEn) heroNameEn.textContent = DATA.heroNameEn;
+      if (heroCatch) heroCatch.textContent = DATA.heroCatch;
+
+      const p = DATA.profile;
+      const rows = document.querySelectorAll('.profile-table tr');
+      if (rows.length >= 6) {
+        rows[0].querySelector('td').textContent = p.name;
+        rows[1].querySelector('td').textContent = p.age;
+        rows[2].querySelector('td').textContent = p.height;
+        rows[3].querySelector('td').textContent = p.blood;
+        rows[4].querySelector('td').textContent = p.shop;
+        rows[5].querySelector('td').textContent = p.area;
+      }
+      const bio = document.querySelector('.profile-bio');
+      if (bio) bio.innerHTML = p.bio.replace(/\n/g, '<br>');
+
+      const footer = document.querySelector('.footer p');
+      if (footer) footer.innerHTML = `&copy; 2026 ${DATA.heroName} / ${DATA.heroNameEn}`;
+    })();
+
     // Photo scroll dots
     const photoScroll = document.querySelector('.photo-scroll');
     const dots = document.querySelectorAll('.dot');

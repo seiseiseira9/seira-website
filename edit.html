@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>編集ページ | 南星 聖来</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --tiffany: #81D8D0;
+      --tiffany-dark: #5bbfb5;
+      --tiffany-pale: #e8f8f7;
+      --dark: #1a1a1a;
+      --mid: #444;
+      --light: #f9fefe;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: #f5f5f5;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--dark);
+      color: #fff;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 28px;
+      border: none;
+      border-radius: 4px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--tiffany-dark);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #4aada3; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--tiffany);
+      border: 1px solid var(--tiffany);
+    }
+    .btn-secondary:hover { background: rgba(129,216,208,0.1); }
+
+    .main {
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--tiffany-dark);
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--mid);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+    .field input,
+    .field textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--tiffany);
+    }
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .sns-item {
+      background: var(--tiffany-pale);
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .sns-item h3 {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--tiffany-dark);
+      margin-bottom: 16px;
+    }
+    .sns-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .sns-fields .field { margin-bottom: 0; }
+    .sns-fields .field.full { grid-column: 1 / -1; }
+
+    .sns-remove {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sns-remove:hover { color: #e74c3c; }
+
+    .add-btn {
+      width: 100%;
+      padding: 14px;
+      border: 2px dashed #ddd;
+      border-radius: 6px;
+      background: none;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.9rem;
+      color: var(--mid);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-btn:hover {
+      border-color: var(--tiffany);
+      color: var(--tiffany-dark);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--dark);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
+      z-index: 200;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      .sns-fields { grid-template-columns: 1fr; }
+      .header { padding: 16px 20px; flex-wrap: wrap; gap: 12px; }
+      .card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- パスワード認証 -->
+  <div id="auth-screen" style="display:none; position:fixed; inset:0; background:#f5f5f5; z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <div style="text-align:center; max-width:360px; padding:40px;">
+      <h2 style="font-size:1.2rem; font-weight:400; margin-bottom:24px; color:#1a1a1a;">編集ページ</h2>
+      <p style="font-size:0.85rem; color:#666; margin-bottom:20px;">パスワードを入力してください</p>
+      <input type="password" id="auth-input" placeholder="パスワード" style="width:100%; padding:12px 16px; border:1px solid #ddd; border-radius:4px; font-size:1rem; margin-bottom:12px;" />
+      <button onclick="checkAuth()" style="width:100%; padding:12px; background:#5bbfb5; color:#fff; border:none; border-radius:4px; font-size:0.9rem; cursor:pointer;">ログイン</button>
+      <p id="auth-error" style="color:#e74c3c; font-size:0.8rem; margin-top:12px; display:none;">パスワードが違います</p>
+    </div>
+  </div>
+
+  <div id="edit-content" style="display:none;">
+  <div class="header">
+    <h1>編集ページ</h1>
+    <div class="header-actions">
+      <a href="index.html" class="btn btn-secondary">サイトを見る</a>
+      <button class="btn btn-primary" onclick="applyChanges()">反映する</button>
+      <button class="btn btn-secondary" onclick="downloadDataJS()">data.js をダウンロード</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Hero Section -->
+    <div class="card">
+      <h2>Hero セクション</h2>
+      <div class="field">
+        <label>サブタイトル</label>
+        <input type="text" id="heroSub" />
+      </div>
+      <div class="field">
+        <label>名前（日本語）</label>
+        <input type="text" id="heroName" />
+      </div>
+      <div class="field">
+        <label>名前（英語）</label>
+        <input type="text" id="heroNameEn" />
+      </div>
+      <div class="field">
+        <label>キャッチコピー</label>
+        <input type="text" id="heroCatch" />
+      </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="card">
+      <h2>Profile</h2>
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="profileName" />
+      </div>
+      <div class="field">
+        <label>Age</label>
+        <input type="text" id="profileAge" />
+      </div>
+      <div class="field">
+        <label>Height</label>
+        <input type="text" id="profileHeight" />
+      </div>
+      <div class="field">
+        <label>Blood Type</label>
+        <input type="text" id="profileBlood" />
+      </div>
+      <div class="field">
+        <label>Shop</label>
+        <input type="text" id="profileShop" />
+      </div>
+      <div class="field">
+        <label>Area</label>
+        <input type="text" id="profileArea" />
+      </div>
+      <div class="field">
+        <label>自己紹介文</label>
+        <textarea id="profileBio"></textarea>
+      </div>
+    </div>
+
+    <!-- SNS Section -->
+    <div class="card">
+      <h2>SNS & Links</h2>
+      <div id="sns-list"></div>
+      <button class="add-btn" onclick="addSnsItem()">+ SNSリンクを追加</button>
+    </div>
+
+  </div>
+
+  </div><!-- /edit-content -->
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // --- Authentication ---
+    const EDIT_PASS = 'seira2026';
+
+    function checkAuth() {
+      const input = document.getElementById('auth-input');
+      if (input.value === EDIT_PASS) {
+        unlockEditor();
+        sessionStorage.setItem('SEIRA_AUTH', '1');
+      } else {
+        document.getElementById('auth-error').style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    // Enterキーでもログインできるように
+    document.getElementById('auth-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkAuth();
+    });
+
+    function unlockEditor() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('edit-content').style.display = 'block';
+    }
+
+    // Check if already authenticated in this session
+    if (sessionStorage.getItem('SEIRA_AUTH') === '1') {
+      unlockEditor();
+    } else {
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('auth-input').focus();
+    }
+  </script>
+
+  <script src="data.js"></script>
+  <script>
+    // --- Load current data into form ---
+    document.getElementById('heroSub').value = DATA.heroSub || '';
+    document.getElementById('heroName').value = DATA.heroName || '';
+    document.getElementById('heroNameEn').value = DATA.heroNameEn || '';
+    document.getElementById('heroCatch').value = DATA.heroCatch || '';
+
+    document.getElementById('profileName').value = DATA.profile.name || '';
+    document.getElementById('profileAge').value = DATA.profile.age || '';
+    document.getElementById('profileHeight').value = DATA.profile.height || '';
+    document.getElementById('profileBlood').value = DATA.profile.blood || '';
+    document.getElementById('profileShop').value = DATA.profile.shop || '';
+    document.getElementById('profileArea').value = DATA.profile.area || '';
+    document.getElementById('profileBio').value = (DATA.profile.bio || '').replace(/\\n/g, '\n');
+
+    // --- SNS items ---
+    const snsList = document.getElementById('sns-list');
+
+    function renderSnsItems() {
+      snsList.innerHTML = '';
+      DATA.sns.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'sns-item';
+        div.innerHTML = `
+          <button class="sns-remove" onclick="removeSns(${i})" title="削除">&times;</button>
+          <h3>${item.label || 'SNS ' + (i + 1)}</h3>
+          <div class="sns-fields">
+            <div class="field">
+              <label>アイコン（絵文字）</label>
+              <input type="text" value="${escapeAttr(item.icon)}" oninput="DATA.sns[${i}].icon=this.value" />
+            </div>
+            <div class="field">
+              <label>ラベル</label>
+              <input type="text" value="${escapeAttr(item.label)}" oninput="DATA.sns[${i}].label=this.value; this.closest('.sns-item').querySelector('h3').textContent=this.value" />
+            </div>
+            <div class="field">
+              <label>説明</label>
+              <input type="text" value="${escapeAttr(item.desc)}" oninput="DATA.sns[${i}].desc=this.value" />
+            </div>
+            <div class="field">
+              <label>URL</label>
+              <input type="url" value="${escapeAttr(item.url)}" oninput="DATA.sns[${i}].url=this.value" />
+            </div>
+          </div>
+        `;
+        snsList.appendChild(div);
+      });
+    }
+
+    function escapeAttr(s) {
+      return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function removeSns(index) {
+      DATA.sns.splice(index, 1);
+      renderSnsItems();
+    }
+
+    function addSnsItem() {
+      DATA.sns.push({ icon: '', label: '', desc: '', url: '' });
+      renderSnsItems();
+      snsList.lastElementChild.querySelector('input').focus();
+    }
+
+    renderSnsItems();
+
+    // --- Generate & download data.js ---
+    function gatherData() {
+      return {
+        heroSub: document.getElementById('heroSub').value,
+        heroName: document.getElementById('heroName').value,
+        heroNameEn: document.getElementById('heroNameEn').value,
+        heroCatch: document.getElementById('heroCatch').value,
+        profile: {
+          name: document.getElementById('profileName').value,
+          age: document.getElementById('profileAge').value,
+          height: document.getElementById('profileHeight').value,
+          blood: document.getElementById('profileBlood').value,
+          shop: document.getElementById('profileShop').value,
+          area: document.getElementById('profileArea').value,
+          bio: document.getElementById('profileBio').value,
+        },
+        sns: DATA.sns,
+      };
+    }
+
+    function escapeJS(s) {
+      return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+    }
+
+    function generateDataJS(data) {
+      let lines = [];
+      lines.push('const DATA = {');
+      lines.push(`  heroSub:    '${escapeJS(data.heroSub)}',`);
+      lines.push(`  heroName:   '${escapeJS(data.heroName)}',`);
+      lines.push(`  heroNameEn: '${escapeJS(data.heroNameEn)}',`);
+      lines.push(`  heroCatch:  '${escapeJS(data.heroCatch)}',`);
+      lines.push('  profile: {');
+      lines.push(`    name:   '${escapeJS(data.profile.name)}',`);
+      lines.push(`    age:    '${escapeJS(data.profile.age)}',`);
+      lines.push(`    height: '${escapeJS(data.profile.height)}',`);
+      lines.push(`    blood:  '${escapeJS(data.profile.blood)}',`);
+      lines.push(`    shop:   '${escapeJS(data.profile.shop)}',`);
+      lines.push(`    area:   '${escapeJS(data.profile.area)}',`);
+      lines.push(`    bio:    '${escapeJS(data.profile.bio)}',`);
+      lines.push('  },');
+      lines.push('  sns: [');
+      data.sns.forEach(item => {
+        lines.push(`    { icon: '${escapeJS(item.icon)}', label: '${escapeJS(item.label)}', desc: '${escapeJS(item.desc)}', url: '${escapeJS(item.url)}' },`);
+      });
+      lines.push('  ],');
+      lines.push('};');
+      return lines.join('\n') + '\n';
+    }
+
+    function applyChanges() {
+      const data = gatherData();
+      localStorage.setItem('SEIRA_DATA', JSON.stringify(data));
+      showToast('反映しました！サイトを見るボタンで確認できます');
+    }
+
+    function downloadDataJS() {
+      const data = gatherData();
+      const content = generateDataJS(data);
+      const blob = new Blob([content], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.js';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('data.js をダウンロードしました');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>
